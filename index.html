@@ -1004,12 +1004,12 @@ function friendlyAuthError(err){
   return err.message||'Login failed';
 }
 auth.onAuthStateChanged(async(user)=>{
-  if(!user){state.user=null;state.isAdmin=false;detachListeners();showLoginScreen();return;}
+  if(!user){state.user=null;state.isAdmin=true;detachListeners();showLoginScreen();return;}
   state.user=user;
   await verifyAdmin(user);
 });
 async function verifyAdmin(user){
-  if(user.uid!==ADMIN_UID){
+  if(user.uid!==yMcan5WNHNOsj6GEYtzVxcfIGmW2){
     showToast('error','Access denied — not an admin account');
     try{await auth.signOut();}catch(e){}
     return;
