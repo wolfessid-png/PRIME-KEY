@@ -1006,14 +1006,7 @@ function friendlyAuthError(err){
 auth.onAuthStateChanged(async(user)=>{
   if(!user){state.user=null;state.isAdmin=false;detachListeners();showLoginScreen();return;}
   state.user=user;
-  await verifyAdmin(user);
-});
-async function verifyAdmin(user){
-  if(user.uid!==ADMIN_UID){
-    showToast('error','Access denied — not an admin account');
-    try{await auth.signOut();}catch(e){}
-    return;
-  }
+
   try{
     const snap=await db.ref(ADMINS_PATH+'/'+user.uid).once('value');
     const v=snap.val();
