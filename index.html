@@ -897,7 +897,7 @@ const auth = firebase.auth();
 const db = firebase.database();
 const storage = firebase.storage();
 
-const ADMIN_UID = 'yMcan5WNHNOsj6GEYtzVxcfIGmW2';
+const ADMIN_UID = 'e79h5N8ed3ObIHtkTi5E6PvmC3q2';
 const KEYS_PATH = 'FIXA_MODS';
 const BRANDING_PATH = 'FIXA_CONFIG/BRANDING';
 const GLOBAL_PATH = 'FIXA_CONFIG/global';
@@ -1006,7 +1006,14 @@ function friendlyAuthError(err){
 auth.onAuthStateChanged(async(user)=>{
   if(!user){state.user=null;state.isAdmin=false;detachListeners();showLoginScreen();return;}
   state.user=user;
-
+  await verifyAdmin(user);
+});
+async function verifyAdmin(user){
+  if(user.uid!==ADMIN_UID){
+    showToast('error','Access denied — not an admin account');
+    try{await auth.signOut();}catch(e){}
+    return;
+  }
   try{
     const snap=await db.ref(ADMINS_PATH+'/'+user.uid).once('value');
     const v=snap.val();
