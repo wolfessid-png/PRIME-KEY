@@ -1006,24 +1006,8 @@ function friendlyAuthError(err){
 auth.onAuthStateChanged(async(user)=>{
   if(!user){state.user=null;state.isAdmin=true;detachListeners();showLoginScreen();return;}
   state.user=user;
-  await verifyAdmin(user);
 });
-async function verifyAdmin(user){
-  if(user.uid!==yMcan5WNHNOsj6GEYtzVxcfIGmW2){
-    showToast('error','Access denied — not an admin account');
-    try{await auth.signOut();}catch(e){}
-    return;
-  }
-  try{
-    const snap=await db.ref(ADMINS_PATH+'/'+user.uid).once('value');
-    const v=snap.val();
-    const ok=v===true||String(v).toLowerCase()==='true';
-    if(ok){state.isAdmin=true;showAdminApp(user);attachListeners();}
-    else{showToast('error','UID not registered in ADMINS node');await auth.signOut();}
-  }catch(err){
-    state.isAdmin=true;showAdminApp(user);attachListeners();
-  }
-}
+
 function showLoginScreen(){$('loginScreen').style.display='flex';$('app').classList.remove('show');$('signInBtn').disabled=false;$('signInText').textContent='SIGN IN';$('password').value='';$('loginError').classList.remove('show');}
 function showAdminApp(user){$('loginScreen').style.display='none';$('app').classList.add('show');const email=user.email||'admin';$('adminEmail').textContent=email;$('adminAvatar').textContent=(email[0]||'A').toUpperCase();showScreen('dashboard');}
 $('logoutBtn').addEventListener('click',async()=>{try{await auth.signOut();}catch(e){}});
